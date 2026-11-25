@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="Guía interactiva para entender la paginación paso a paso: simple, media y avanzada. Componentes y custom hooks de React explicados. Basada en el curso de React." />
+	<title>Paginación paso a paso · Guía interactiva de React</title>
+	<link rel="stylesheet" href="vendor/prism-tomorrow.min.css" />
+	<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+	<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+	<header class="site-header">
+		<div class="header-inner">
+			<a class="brand" href="#inicio" aria-label="Ir al inicio">
+				<span class="brand-mark">‹ ›</span>
+				<span class="brand-text">Paginación <strong>101</strong></span>
+			</a>
+			<nav class="top-nav" aria-label="Navegación principal">
+				<a href="#por-que">¿Por qué?</a>
+				<a href="#cuentas">Las cuentas</a>
+				<a href="#paso1" data-step-link="s1">Paso 1</a>
+				<a href="#paso2" data-step-link="s2">Paso 2</a>
+				<a href="#paso3" data-step-link="s3">Paso 3</a>
+				<a href="#resumen">Resumen</a>
+			</nav>
+			<span class="header-badge">Basado en el curso de React</span>
+		</div>
+	</header>
+
+	<main id="inicio">
+		<!-- HERO -->
+		<section class="hero">
+			<div class="hero-glow" aria-hidden="true"></div>
+			<div class="hero-inner">
+				<div class="hero-copy">
+					<span class="eyebrow">De cero a paginador avanzado</span>
+					<h1>La paginación,<br /><em>sin misterio.</em></h1>
+					<p class="hero-lead">
+						Tres pasos, un mismo catálogo de productos y muchos botones para tocar.
+						Aprendé <strong>por qué se pagina</strong>, <strong>cómo se arma</strong> y cómo se escribe
+						con <strong>componentes y custom hooks de React</strong>, usando los ejemplos del curso
+						(<code>Productos nacionales</code>).
+					</p>
+					<div class="hero-actions">
+						<a class="btn btn-primary" href="#paso1">Empezar con el paso 1 <span aria-hidden="true">↓</span></a>
+						<a class="btn btn-ghost" href="#por-que">Primero, ¿para qué sirve?</a>
+					</div>
+					<div class="hero-stats">
+						<div><strong>3</strong><span>niveles</span></div>
+						<div><strong>4</strong><span>productos por página</span></div>
+						<div><strong>30</strong><span>páginas en el catálogo</span></div>
+					</div>
+				</div>
+
+				<div class="hero-visual" aria-hidden="true">
+					<div class="mock-card">
+						<div class="mock-bar"><span></span><span></span><span></span></div>
+						<div class="mock-lines"><i></i><i></i><i></i></div>
+						<div class="mock-pager">
+							<b>‹</b><b class="on">1</b><b>…</b><b>9</b><b>10</b><b>11</b><b>…</b><b>30</b><b>›</b>
+						</div>
+						<div class="mock-caption">vista previa del paginador avanzado</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- POR QUÉ -->
+		<section class="section" id="por-que">
+			<div class="section-head">
+				<span class="section-kicker">01 · El motivo</span>
+				<h2>¿Por qué se pagina?</h2>
+				<p>Imaginá que tenés 120 productos en tu base de datos. Mostrarlos todos de una es como querer leer un libro entero de una sola mirada: pesado, lento y confuso.</p>
+			</div>
+
+			<div class="reason-grid">
+				<article class="reason-card">
+					<div class="reason-icon">⚡</div>
+					<h3>Rendimiento</h3>
+					<p>Se reduce el tiempo de carga inicial: pedí solo un puñado de registros, no todos.</p>
+				</article>
+				<article class="reason-card">
+					<div class="reason-icon">🧭</div>
+					<h3>Experiencia de usuario</h3>
+					<p>La interfaz responde mejor y la persona sabe siempre dónde está: «voy por la página 3 de 30».</p>
+				</article>
+				<article class="reason-card">
+					<div class="reason-icon">📈</div>
+					<h3>Escalabilidad</h3>
+					<p>El mismo código sirve para 20 productos o para 20.000. Cambiás el límite, no la idea.</p>
+				</article>
+				<article class="reason-card">
+					<div class="reason-icon">💾</div>
+					<h3>Consumo de recursos</h3>
+					<p>Menos memoria en el navegador y menos ancho de banda viajando por la red.</p>
+				</article>
+			</div>
+
+			<blockquote class="course-quote">
+				<p>«Un paginador es un componente de interfaz de usuario que divide un conjunto grande de datos en páginas más pequeñas y manejables. En lugar de cargar todos los registros de una vez, muestra solo un subconjunto específico (por ejemplo, 10 productos por página) y proporciona controles para navegar entre las diferentes páginas.»</p>
+				<footer><span class="quote-file">📄 CLASE 14 REACT</span> · Optimización de carga: Implementación de un paginador</footer>
+			</blockquote>
+
+			<div class="note note-course">
+				<div class="note-icon">🔥</div>
+				<div>
+					<strong>En el curso lo hacían con Firebase.</strong>
+					Ahí el paginador era de «Cargar más»: <code>limit(PRODUCTOS_POR_PAGINA)</code> para pedir 4 productos y
+					<code>startAfter(ultimoVisible)</code> para seguir desde el último documento. Acá, para aprender la lógica
+					sin depender de una base de datos, simulamos tener el catálogo en memoria y lo cortamos con
+					<code>slice()</code>. Al final del paso 3 te mostramos cómo se traduce esa misma idea a Firestore.
+				</div>
+			</div>
+		</section>
+
+		<!-- CUENTAS -->
+		<section class="section section-alt" id="cuentas">
+			<div class="section-head">
+				<span class="section-kicker">02 · La lógica</span>
+				<h2>Las 4 cuentas de toda paginación</h2>
+				<p>Antes de tocar un botón, entendé qué pasa adentro. Esto es lo único que realmente tenés que saber.</p>
+			</div>
+
+			<div class="formula-grid">
+				<div class="formula-card">
+					<span class="formula-num">1</span>
+					<h3>¿Cuántas páginas hay?</h3>
+					<pre class="formula-code language-jsx"><code class="language-jsx">totalPaginas = Math.ceil(
+	totalProductos / POR_PAGINA
+);</code></pre>
+					<p>Redondeamos <em>hacia arriba</em> porque 5 productos de 4 dan 2 páginas, nunca 1,25.</p>
+				</div>
+				<div class="formula-card">
+					<span class="formula-num">2</span>
+					<h3>¿Desde dónde corto?</h3>
+					<pre class="formula-code language-jsx"><code class="language-jsx">inicio = (paginaActual - 1) * POR_PAGINA;</code></pre>
+					<p>Página 1 empieza en 0, página 2 en 4, página 3 en 8. Es un índice de array.</p>
+				</div>
+				<div class="formula-card">
+					<span class="formula-num">3</span>
+					<h3>¿Hasta dónde corto?</h3>
+					<pre class="formula-code language-jsx"><code class="language-jsx">fin = inicio + POR_PAGINA;
+visibles = productos.slice(inicio, fin);</code></pre>
+					<p><code>slice</code> no incluye el índice final: por eso de 0 a 4 salen 4 productos (0, 1, 2, 3).</p>
+				</div>
+				<div class="formula-card">
+					<span class="formula-num">4</span>
+					<h3>¿Los botones se pueden apretar?</h3>
+					<pre class="formula-code language-jsx"><code class="language-jsx">puedeAtras   = paginaActual &gt; 1;
+puedeAdelante = paginaActual &lt; totalPaginas;</code></pre>
+					<p>Si no hay página anterior o siguiente, el botón se deshabilita. Nunca dejés ir a la página 0 ni a la 31.</p>
+				</div>
+			</div>
+
+			<div class="note note-tip">
+				<div class="note-icon">🎯</div>
+				<div><strong>El error más común (off-by-one):</strong> olvidar que los arrays empiezan en 0 pero las páginas empiezan en 1. Por eso se resta <code>1</code> a <code>paginaActual</code> para calcular <code>inicio</code>.</div>
+			</div>
+
+			<div class="note note-hook">
+				<div class="note-icon">🧩</div>
+				<div>
+					<strong>Cómo está organizado el código de abajo.</strong>
+					Cada paso tiene tres bloques separados y coloreados:
+					<strong>(1) el custom hook</strong> con toda la lógica y el estado,
+					<strong>(2) el componente</strong> que solo dibuja lo que el hook le devuelve,
+					<strong>(3) los datos y el App</strong> que lo ponen en marcha.
+					Separar así te permite cambiar la interfaz sin romper la paginación y reutilizar la lógica en varios listados.
+				</div>
+			</div>
+		</section>
+
+		<!-- PASO 1 -->
+		<section class="section lab" id="paso1">
+			<div class="lab-head">
+				<div class="lab-head-top">
+					<span class="step-chip" data-step-chip="s1">Paso 1 de 3</span>
+					<span class="level-tag level-tag-simple">Nivel inicial</span>
+				</div>
+				<h2>Paginación simple <span class="head-pager">‹ Anterior · Siguiente ›</span></h2>
+				<p>Lo mínimo que necesitás: dos botones. No hay números, solo la idea de avanzar o retroceder una página. Probá a apretar «Siguiente» hasta llegar al final y mirá cómo se deshabilita. Abajo, el código completo en React con su custom hook.</p>
+			</div>
+
+			<div class="lab-grid">
+				<div class="lab-main">
+					<div class="panel">
+						<div class="panel-head">
+							<h3>Probá vos <span class="dot-live"></span></h3>
+							<span class="panel-hint">20 productos · 4 por página · 5 páginas</span>
+						</div>
+						<div class="demo-area">
+							<div class="demo-topbar">
+								<span class="pill" id="s1-counter">Página 1 de 5</span>
+								<span class="pill ghost" id="s1-range">Productos 1–4 de 20</span>
+							</div>
+							<div class="product-grid" id="s1-products"></div>
+							<nav class="pager" id="s1-pager" aria-label="Paginación simple" tabindex="0"></nav>
+							<p class="keyboard-hint">Tip: también podés usar las flechas ← → del teclado.</p>
+						</div>
+					</div>
+
+					<div class="panel code-panel">
+	<div class="code-head">
+		<span class="code-label">React · código completo</span>
+		<span class="code-meta">3 bloques independientes</span>
+	</div>
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">1</span> Custom hook <small>la lógica</small></span>
+			<button class="copy-btn" data-copy="s1-hook">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import { useState } from 'react';
+
+/* ============================================================
+	 CUSTOM HOOK: toda la lógica de paginación vive acá
+	 ============================================================ */
+export function usePaginacionSimple(items, porPagina = 4) {
+	// Estado: cuando cambia, React vuelve a dibujar el componente.
+	const [paginaActual, setPaginaActual] = useState(1);
+
+	// 1. ¿Cuántas páginas hay? Math.ceil redondea hacia arriba.
+	const totalPaginas = Math.max(1, Math.ceil(items.length / porPagina));
+
+	// 2 y 3. Las páginas empiezan en 1, los arrays en 0: se resta 1.
+	const inicio = (paginaActual - 1) * porPagina;
+	const fin = inicio + porPagina; // slice NO incluye el índice "fin"
+	const productosVisibles = items.slice(inicio, fin);
+
+	// 4. Estos booleanos evitan ir a la página 0 o a la página 31.
+	const puedeAnterior = paginaActual &gt; 1;
+	const puedeSiguiente = paginaActual &lt; totalPaginas;
+
+	function anterior() {
+		setPaginaActual((p) =&gt; Math.max(1, p - 1));
+	}
+
+	function siguiente() {
+		setPaginaActual((p) =&gt; Math.min(totalPaginas, p + 1));
+	}
+
+	function irAPagina(n) {
+		if (n &gt;= 1 &amp;&amp; n &lt;= totalPaginas) setPaginaActual(n);
+	}
+
+	// Devolvemos datos + funciones. El componente no calcula nada.
+	return {
+		paginaActual, totalPaginas, inicio, fin, productosVisibles,
+		puedeAnterior, puedeSiguiente, anterior, siguiente, irAPagina
+	};
+}</code></pre>
+	</div>
+
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">2</span> Componente <small>dibuja</small></span>
+			<button class="copy-btn" data-copy="s1-componente">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import { usePaginacionSimple } from './usePaginacionSimple';
+
+/* COMPONENTE: solo dibuja lo que el hook le devuelve */
+function ListadoSimple({ productos }) {
+	const {
+		paginaActual, totalPaginas, productosVisibles,
+		puedeAnterior, puedeSiguiente, anterior, siguiente
+	} = usePaginacionSimple(productos, 4);
+
+	return (
+		&lt;section&gt;
+			&lt;h2&gt;Productos nacionales&lt;/h2&gt;
+			&lt;p&gt;Página {paginaActual} de {totalPaginas}&lt;/p&gt;
+
+			&lt;ul&gt;
+				{productosVisibles.map((producto) =&gt; (
+					// key le dice a React cuál fila reutilizar: usá un ID, no el índice
+					&lt;li key={producto.id}&gt;
+						{producto.nombre} — ${producto.precio} · stock {producto.stock}
+					&lt;/li&gt;
+				))}
+			&lt;/ul&gt;
+
+			&lt;button onClick={anterior} disabled={!puedeAnterior}&gt;
+				‹ Anterior
+			&lt;/button&gt;
+			&lt;button onClick={siguiente} disabled={!puedeSiguiente}&gt;
+				Siguiente ›
+			&lt;/button&gt;
+		&lt;/section&gt;
+	);
+}
+
+export default ListadoSimple;</code></pre>
+	</div>
+
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">3</span> Datos y App <small>el uso final</small></span>
+			<button class="copy-btn" data-copy="s1-datos">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import ListadoSimple from './ListadoSimple';
+
+// CLASE 04 REACT
+const PRODUCTOS = [
+	{ id: '1234', nombre: 'Notebook Pro', precio: 12000, stock: 15 },
+	{ id: '2344', nombre: 'Monitor Curvo', precio: 450000, stock: 25 },
+	{ id: '2545', nombre: 'Teclado Mecánico', precio: 15000, stock: 50 },
+	// ... el resto de la colección "Productos nacionales"
+	// 20 productos = 5 páginas de 4
+];
+
+export default function App() {
+	return &lt;ListadoSimple productos={PRODUCTOS} /&gt;;
+}
+
+/* Resultado: ‹ Anterior  1 de 5  Siguiente ›
+	 Al llegar a la página 5, "Siguiente" queda deshabilitado. */</code></pre>
+	</div>
+</div>
+				</div>
+
+				<aside class="lab-side">
+					<div class="panel state-panel">
+						<div class="panel-head"><h3>Estado en vivo</h3><button class="reset-btn" data-reset="s1">↺ Reiniciar</button></div>
+						<pre id="s1-state"></pre>
+					</div>
+					<div class="panel explain-panel">
+						<h3>Qué está pasando</h3>
+						<ol>
+							<li>El array <code>productos</code> tiene 20 elementos.</li>
+							<li><code>slice(0, 4)</code> muestra los primeros 4.</li>
+							<li>Al apretar «Siguiente», <code>paginaActual</code> sube a 2.</li>
+							<li>Ahora <code>inicio = 4</code>: mostramos del 5º al 8º.</li>
+							<li>En la página 5, <code>paginaActual === totalPaginas</code> y el botón se deshabilita.</li>
+						</ol>
+					</div>
+					<div class="panel explain-panel anatomy">
+						<h3>Anatomía del código</h3>
+						<ul class="anatomy-list">
+							<li>Un <strong>custom hook</strong> es una función que empieza con <code>use</code> y puede usar hooks de React adentro.</li>
+							<li><code>usePaginacionSimple(items, 4)</code> guarda el estado y devuelve datos + funciones.</li>
+							<li><code>ListadoSimple</code> es el componente: solo recibe y dibuja. No calcula páginas.</li>
+							<li><code>setPaginaActual(p =&gt; p + 1)</code> usa el valor anterior para evitar errores con clics rápidos.</li>
+							<li><code>disabled={!puedeSiguiente}</code> bloquea el botón cuando no hay página siguiente.</li>
+							<li><code>key={producto.id}</code> permite a React identificar cada fila. Usá un ID, no el índice.</li>
+						</ul>
+					</div>
+				</aside>
+			</div>
+		</section>
+
+		<!-- PASO 2 -->
+		<section class="section section-alt lab" id="paso2">
+			<div class="lab-head">
+				<div class="lab-head-top">
+					<span class="step-chip" data-step-chip="s2">Paso 2 de 3</span>
+					<span class="level-tag level-tag-media">Nivel intermedio</span>
+				</div>
+				<h2>Paginación media <span class="head-pager">‹ 1 2 3 4 5 6 ›</span></h2>
+				<p>Mismos botones, pero ahora agregamos los números. Como son pocas páginas (6), las mostramos <strong>todas</strong>. Fíjate en el código: el hook del paso 1 se reutiliza, no se copia. La página activa se resalta y se marca con <code>aria-current="page"</code>.</p>
+			</div>
+
+			<div class="lab-grid">
+				<div class="lab-main">
+					<div class="panel">
+						<div class="panel-head">
+							<h3>Probá vos <span class="dot-live"></span></h3>
+							<span class="panel-hint">24 productos · 4 por página · 6 páginas</span>
+						</div>
+						<div class="demo-area">
+							<div class="demo-topbar">
+								<span class="pill" id="s2-counter">Página 1 de 6</span>
+								<span class="pill ghost" id="s2-range">Productos 1–4 de 24</span>
+							</div>
+							<div class="product-grid" id="s2-products"></div>
+							<nav class="pager" id="s2-pager" aria-label="Paginación media" tabindex="0"></nav>
+							<p class="keyboard-hint">Probá saltar directo a la página 6: los botones «Siguiente» y «6» se deshabilitan.</p>
+						</div>
+					</div>
+
+					<div class="panel code-panel">
+	<div class="code-head">
+		<span class="code-label">React · código completo</span>
+		<span class="code-meta">3 bloques independientes</span>
+	</div>
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">1</span> Custom hook <small>reutiliza el paso 1</small></span>
+			<button class="copy-btn" data-copy="s2-hook">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import { usePaginacionSimple } from './usePaginacionSimple'; // hook del paso 1
+
+/* ============================================================
+	 CUSTOM HOOK: reutiliza el paso 1 y agrega los números
+	 ============================================================ */
+export function usePaginacionNumerada(items, porPagina = 4) {
+	// No repetimos las cuentas: el hook simple ya da página, límites y slice.
+	const pagina = usePaginacionSimple(items, porPagina);
+
+	// Array.from({ length: n }, (_, i) =&gt; i + 1) devuelve [1, 2, 3, ...]
+	const numeros = Array.from(
+		{ length: pagina.totalPaginas },
+		(_, indice) =&gt; indice + 1
+	);
+
+	// ...pagina copia todo lo anterior y le suma "numeros".
+	return { ...pagina, numeros };
+}</code></pre>
+	</div>
+
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">2</span> Componente <small>dibuja</small></span>
+			<button class="copy-btn" data-copy="s2-componente">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import { usePaginacionNumerada } from './usePaginacionNumerada';
+
+/* COMPONENTE: Anterior, un botón por número y Siguiente */
+function ListadoNumerado({ productos }) {
+	const {
+		paginaActual, totalPaginas, numeros, productosVisibles,
+		puedeAnterior, puedeSiguiente, anterior, siguiente, irAPagina
+	} = usePaginacionNumerada(productos, 4);
+
+	return (
+		&lt;section&gt;
+			&lt;p&gt;Página {paginaActual} de {totalPaginas}&lt;/p&gt;
+
+			&lt;ul&gt;
+				{productosVisibles.map((p) =&gt; (
+					&lt;li key={p.id}&gt;{p.nombre} — ${p.precio}&lt;/li&gt;
+				))}
+			&lt;/ul&gt;
+
+			&lt;nav aria-label="Páginas"&gt;
+				&lt;button onClick={anterior} disabled={!puedeAnterior}&gt;‹ Anterior&lt;/button&gt;
+
+				{numeros.map((n) =&gt; (
+					&lt;button
+						key={n}
+						// className resalta el activo; aria-current lo anuncia
+						className={n === paginaActual ? 'activo' : ''}
+						aria-current={n === paginaActual ? 'page' : undefined}
+						onClick={() =&gt; irAPagina(n)}
+					&gt;
+						{n}
+					&lt;/button&gt;
+				))}
+
+				&lt;button onClick={siguiente} disabled={!puedeSiguiente}&gt;Siguiente ›&lt;/button&gt;
+			&lt;/nav&gt;
+		&lt;/section&gt;
+	);
+}
+
+export default ListadoNumerado;</code></pre>
+	</div>
+
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">3</span> Datos y App <small>el uso final</small></span>
+			<button class="copy-btn" data-copy="s2-datos">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import ListadoNumerado from './ListadoNumerado';
+
+const PRODUCTOS = [
+	{ id: '1234', nombre: 'Notebook Pro', precio: 12000, stock: 15 },
+	{ id: '2344', nombre: 'Monitor Curvo', precio: 450000, stock: 25 },
+	{ id: '2545', nombre: 'Teclado Mecánico', precio: 15000, stock: 50 },
+	// ... hasta completar 24 productos (6 páginas de 4)
+];
+
+export default function App() {
+	return &lt;ListadoNumerado productos={PRODUCTOS} /&gt;;
+}
+
+/* Resultado: ‹ Anterior  1 2 3 4 5 6  Siguiente ›
+	 Con 30 páginas esta fila se rompe → necesitamos el paso 3. */</code></pre>
+	</div>
+</div>
+				</div>
+
+				<aside class="lab-side">
+					<div class="panel state-panel">
+						<div class="panel-head"><h3>Estado en vivo</h3><button class="reset-btn" data-reset="s2">↺ Reiniciar</button></div>
+						<pre id="s2-state"></pre>
+					</div>
+					<div class="panel explain-panel">
+						<h3>Qué cambió respecto al paso 1</h3>
+						<ol>
+							<li>La lógica de <code>slice()</code> es <strong>idéntica</strong>. No cambió nada ahí.</li>
+							<li>El hook nuevo llama al viejo: <code>usePaginacionSimple(items, 4)</code>.</li>
+							<li>Agregamos <code>Array.from</code> para generar el array <code>[1, 2, 3, 4, 5, 6]</code>.</li>
+							<li>Cada número es un botón que llama a <code>irAPagina(n)</code>.</li>
+							<li><code>className</code> resalta el activo; <code>aria-current</code> lo anuncia.</li>
+						</ol>
+						<div class="mini-warning">Esto funciona hasta ~7 páginas. Con 30, ¡se te arma una fila imposible de leer! →</div>
+					</div>
+					<div class="panel explain-panel anatomy">
+						<h3>Anatomía del código</h3>
+						<ul class="anatomy-list">
+							<li><code>return { ...pagina, numeros }</code> crea un objeto nuevo con todo lo anterior más lo nuevo.</li>
+							<li><code>Array.from({ length: total }, (_, i) =&gt; i + 1)</code> es la forma corta de armar <code>[1..total]</code>.</li>
+							<li><code>key={n}</code> va en cada botón para que React sepa cuál es cuál.</li>
+							<li><code>aria-current={... ? 'page' : undefined}</code> indica al lector de pantalla la página actual.</li>
+							<li>El <code>disabled</code> de «Anterior» y «Siguiente» viene del hook del paso 1: no se recalcula.</li>
+						</ul>
+					</div>
+				</aside>
+			</div>
+		</section>
+
+		<!-- PASO 3 -->
+		<section class="section lab" id="paso3">
+			<div class="lab-head">
+				<div class="lab-head-top">
+					<span class="step-chip" data-step-chip="s3">Paso 3 de 3</span>
+					<span class="level-tag level-tag-advanced">Nivel avanzado</span>
+				</div>
+				<h2>Paginación avanzada <span class="head-pager">‹ 1 … 7 8 9 10 11 12 … 30 ›</span></h2>
+				<p>Con 30 páginas no podés mostrarlas todas. Mostramos una <strong>ventana</strong> de páginas alrededor de la actual y usamos <code>…</code> para representar las que quedaron afuera. El <strong>1 y el último siempre están</strong>. El bloque de código incluye la función pura, el hook con <code>useMemo</code>, el componente y la nota de Firebase.</p>
+			</div>
+
+			<div class="lab-grid">
+				<div class="lab-main">
+					<div class="panel">
+						<div class="panel-head">
+							<h3>Probá vos <span class="dot-live"></span></h3>
+							<span class="panel-hint">Mové los controles y mirá cómo cambia el paginador</span>
+						</div>
+						<div class="demo-area">
+							<div class="controls-row">
+								<label class="control">
+									<span>Productos totales <output id="s3-total-value">120</output></span>
+									<input type="range" id="s3-total" min="12" max="480" step="4" value="120" />
+								</label>
+								<label class="control control-small">
+									<span>Ventana de páginas</span>
+									<select id="s3-ventana">
+										<option value="4">4 páginas</option>
+										<option value="6" selected>6 páginas</option>
+										<option value="8">8 páginas</option>
+									</select>
+								</label>
+								<div class="control control-go">
+									<span>Ir a página</span>
+									<div class="go-row">
+										<input type="number" id="s3-go" min="1" max="30" value="9" aria-label="Número de página" />
+										<button class="btn btn-mini" id="s3-go-btn">Ir</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="page-map" id="s3-map" aria-label="Mapa de páginas"></div>
+
+							<div class="demo-topbar">
+								<span class="pill" id="s3-counter">Página 9 de 30</span>
+								<span class="pill ghost" id="s3-range">Productos 33–36 de 120</span>
+							</div>
+							<div class="product-grid" id="s3-products"></div>
+							<nav class="pager pager-advanced" id="s3-pager" aria-label="Paginación avanzada" tabindex="0"></nav>
+							<p class="keyboard-hint">Los «…» son clicables: saltan de a una ventana. Probá pasar el slider a 24 productos: los «…» desaparecen y se muestran todas las páginas.</p>
+						</div>
+					</div>
+
+					<div class="panel code-panel">
+	<div class="code-head">
+		<span class="code-label">React · código completo</span>
+		<span class="code-meta">3 bloques independientes</span>
+	</div>
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">1</span> Custom hook <small>función pura + useMemo</small></span>
+			<button class="copy-btn" data-copy="s3-hook">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import { useMemo } from 'react';
+import { usePaginacionNumerada } from './usePaginacionNumerada'; // paso 2
+
+/* ============================================================
+	 FUNCIÓN PURA: produce los botones. Misma entrada = misma salida.
+	 ============================================================ */
+function construirPaginas(actual, total, ventana = 6) {
+	// Si hay pocas, mostramos todas igual que en el paso 2.
+	if (total &lt;= ventana + 2) {
+		return Array.from({ length: total }, (_, i) =&gt; ({
+			tipo: 'numero', valor: i + 1
+		}));
+	}
+
+	// Ventana de 6: 2 antes + la actual + 3 después.
+	let izq = Math.max(2, actual - Math.floor((ventana - 1) / 2));
+	let der = Math.min(total - 1, izq + ventana - 1);
+	izq = Math.max(2, der - ventana + 1); // corro si se pasó del final
+
+	const resultado = [{ tipo: 'numero', valor: 1 }]; // el 1 siempre va
+
+	if (izq &gt; 2) {
+		// Hueco entre el 1 y la ventana → punto suspensivo a la izquierda
+		resultado.push({
+			tipo: 'dots', dir: -1, destino: Math.max(1, izq - ventana)
+		});
+	}
+
+	for (let p = izq; p &lt;= der; p++) {
+		resultado.push({ tipo: 'numero', valor: p });
+	}
+
+	if (der &lt; total - 1) {
+		// Hueco hasta el final → punto suspensivo a la derecha
+		resultado.push({
+			tipo: 'dots', dir: 1, destino: Math.min(total, der + ventana + 1)
+		});
+	}
+
+	resultado.push({ tipo: 'numero', valor: total }); // el último siempre va
+	return resultado;
+}
+
+/* ============================================================
+	 CUSTOM HOOK: reutiliza el paso 2 y agrega la ventana
+	 ============================================================ */
+export function usePaginacionAvanzada(items, porPagina = 4, ventana = 6) {
+	const pagina = usePaginacionNumerada(items, porPagina);
+
+	// useMemo evita recalcular si no cambiaron página, total o ventana.
+	const paginas = useMemo(
+		() =&gt; construirPaginas(pagina.paginaActual, pagina.totalPaginas, ventana),
+		[pagina.paginaActual, pagina.totalPaginas, ventana]
+	);
+
+	return { ...pagina, paginas, ventana };
+}</code></pre>
+	</div>
+
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">2</span> Componente <small>dibuja</small></span>
+			<button class="copy-btn" data-copy="s3-componente">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import { useState } from 'react';
+import { usePaginacionAvanzada } from './usePaginacionAvanzada';
+
+/* COMPONENTE: números, "…" clicables y controles extra */
+function ProductosAvanzados({ productos }) {
+	const [ventana, setVentana] = useState(6);
+	const [destino, setDestino] = useState('');
+
+	const {
+		paginaActual, totalPaginas, inicio, fin,
+		productosVisibles, paginas,
+		puedeAnterior, puedeSiguiente,
+		anterior, siguiente, irAPagina
+	} = usePaginacionAvanzada(productos, 4, ventana);
+
+	function irAlInput() {
+		const n = Number(destino);
+		if (n &gt;= 1 &amp;&amp; n &lt;= totalPaginas) irAPagina(n);
+		setDestino('');
+	}
+
+	return (
+		&lt;section&gt;
+			&lt;label&gt;
+				Ventana:
+				&lt;select value={ventana}
+					onChange={(e) =&gt; setVentana(Number(e.target.value))}&gt;
+					&lt;option value={4}&gt;4&lt;/option&gt;
+					&lt;option value={6}&gt;6&lt;/option&gt;
+					&lt;option value={8}&gt;8&lt;/option&gt;
+				&lt;/select&gt;
+			&lt;/label&gt;
+
+			&lt;label&gt;
+				Ir a página:
+				&lt;input
+					type="number" min={1} max={totalPaginas}
+					value={destino}
+					onChange={(e) =&gt; setDestino(e.target.value)}
+					onKeyDown={(e) =&gt; e.key === 'Enter' &amp;&amp; irAlInput()}
+				/&gt;
+				&lt;button onClick={irAlInput}&gt;Ir&lt;/button&gt;
+			&lt;/label&gt;
+
+			&lt;p&gt;Página {paginaActual} de {totalPaginas} · productos {inicio + 1}–{fin}&lt;/p&gt;
+
+			&lt;ul&gt;
+				{productosVisibles.map((p) =&gt; (
+					&lt;li key={p.id}&gt;{p.nombre} — ${p.precio}&lt;/li&gt;
+				))}
+			&lt;/ul&gt;
+
+			&lt;nav aria-label="Páginas"&gt;
+				&lt;button onClick={anterior} disabled={!puedeAnterior}&gt;‹ Anterior&lt;/button&gt;
+
+				{paginas.map((item, i) =&gt;
+					item.tipo === 'dots' ? (
+						// Los "…" son botones de salto con destino guardado
+						&lt;button key={`dots-${i}`}
+							onClick={() =&gt; irAPagina(item.destino)}
+							aria-label={item.dir &lt; 0
+								? 'Saltar páginas atrás'
+								: 'Saltar páginas adelante'}&gt;
+							…
+						&lt;/button&gt;
+					) : (
+						&lt;button key={item.valor}
+							className={item.valor === paginaActual ? 'activo' : ''}
+							aria-current={item.valor === paginaActual ? 'page' : undefined}
+							onClick={() =&gt; irAPagina(item.valor)}&gt;
+							{item.valor}
+						&lt;/button&gt;
+					)
+				)}
+
+				&lt;button onClick={siguiente} disabled={!puedeSiguiente}&gt;Siguiente ›&lt;/button&gt;
+			&lt;/nav&gt;
+		&lt;/section&gt;
+	);
+}
+
+export default ProductosAvanzados;</code></pre>
+	</div>
+
+	<div class="code-section">
+		<div class="code-section-head">
+			<span class="code-section-title"><span class="code-num">3</span> Datos y App <small>incluye Firebase</small></span>
+			<button class="copy-btn" data-copy="s3-datos">Copiar</button>
+		</div>
+		<pre class="code-block language-jsx"><code class="language-jsx">import ProductosAvanzados from './ProductosAvanzados';
+
+const PRODUCTOS = [
+	{ id: '1234', nombre: 'Notebook Pro', precio: 12000, stock: 15 },
+	{ id: '2344', nombre: 'Monitor Curvo', precio: 450000, stock: 25 },
+	{ id: '2545', nombre: 'Teclado Mecánico', precio: 15000, stock: 50 },
+	// ... hasta 120 productos = 30 páginas de 4
+];
+
+export default function App() {
+	return &lt;ProductosAvanzados productos={PRODUCTOS} /&gt;;
+}
+
+/* Resultado con página 9 y ventana 6:
+	 ‹ Anterior  1 … 7 8 9 10 11 12 … 30  Siguiente ›
+
+	 SI LOS DATOS VIENEN DE FIREBASE (CLASE 14 del curso):
+	 en vez de items.slice(inicio, fin) pedís solo esa página:
+		 const q = query(coleccion, limit(4), startAfter(ultimoVisible));
+		 const snap = await getDocs(q);
+	 El hook sigue manejando paginaActual y totalPaginas. */</code></pre>
+	</div>
+</div>
+				</div>
+
+				<aside class="lab-side">
+					<div class="panel state-panel">
+						<div class="panel-head"><h3>Estado en vivo</h3><button class="reset-btn" data-reset="s3">↺ Reiniciar</button></div>
+						<pre id="s3-state"></pre>
+					</div>
+					<div class="panel explain-panel">
+						<h3>La regla de los «…»</h3>
+						<ol>
+							<li>La página <strong>1</strong> y la <strong>última</strong> siempre se dibujan.</li>
+							<li>Calculamos una ventana de 6 páginas cerca de la actual.</li>
+							<li>Si entre el 1 y la ventana hay un hueco, ponemos <code>…</code>.</li>
+							<li>Si entre la ventana y el final hay un hueco, ponemos otro <code>…</code>.</li>
+							<li>Si no hay hueco (pocas páginas), no hay puntos: se muestran todas.</li>
+						</ol>
+					</div>
+					<div class="panel explain-panel anatomy">
+						<h3>Anatomía del código</h3>
+						<ul class="anatomy-list">
+							<li><code>construirPaginas</code> es una <strong>función pura</strong>: no usa estado, solo transforma datos. Es fácil de probar.</li>
+							<li>Devuelve objetos <code>{ tipo: 'numero', valor: 9 }</code> o <code>{ tipo: 'dots', destino: 3 }</code>.</li>
+							<li>El hook usa <code>useMemo</code> con dependencias: solo recalcula cuando cambia algo relevante.</li>
+							<li>El componente pregunta <code>item.tipo === 'dots'</code> y decide qué botón dibujar.</li>
+							<li>Cada <code>…</code> guarda un <code>destino</code>: por eso el salto funciona sin mirar índices.</li>
+							<li><code>key={`dots-${i}`}</code> es único aunque haya dos puntos suspensivos.</li>
+						</ul>
+					</div>
+					<div class="panel explain-panel">
+						<h3>Y en Firebase…</h3>
+						<p>El curso (CLASE 14) usa otro tipo de paginador: <code>limit(4)</code> + <code>startAfter(ultimoVisible)</code> y un botón «Cargar más». Acá numeramos páginas con <code>slice()</code>; allá pedís el siguiente bloque al servidor. La cuenta de <code>POR_PAGINA</code> es la misma en los dos casos.</p>
+					</div>
+				</aside>
+			</div>
+		</section>
+
+		<!-- RESUMEN -->
+		<section class="section section-alt" id="resumen">
+			<div class="section-head">
+				<span class="section-kicker">04 · Para llevar</span>
+				<h2>Elegí el nivel que necesita tu proyecto</h2>
+				<p>No hay una versión «mejor»: hay la que se adapta a cuántos datos tengas. Y en las tres, la lógica vive en un hook y la interfaz en un componente.</p>
+			</div>
+
+			<div class="table-wrap">
+				<table class="compare-table">
+					<thead>
+						<tr><th>Nivel</th><th>Mostrar</th><th>Hook</th><th>Cuándo usarlo</th></tr>
+					</thead>
+					<tbody>
+						<tr><td><a href="#paso1">Simple</a></td><td>‹ Anterior · Siguiente ›</td><td><code>usePaginacionSimple</code></td><td>Listas cortas, blogs, carruseles</td></tr>
+						<tr><td><a href="#paso2">Media</a></td><td>‹ 1 2 3 4 5 6 ›</td><td><code>usePaginacionNumerada</code></td><td>Catálogos de hasta ~7 páginas</td></tr>
+						<tr><td><a href="#paso3">Avanzada</a></td><td>‹ 1 … 7 8 9 … 30 ›</td><td><code>usePaginacionAvanzada</code></td><td>Muchos resultados, buscadores, tablas</td></tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="final-grid">
+				<div class="panel final-card">
+					<h3>Checklist antes de decir «ya está»</h3>
+					<ul class="checklist">
+						<li>¿El hook guarda <code>paginaActual</code> con <code>useState</code>?</li>
+						<li>¿Calculás <code>totalPaginas</code> con <code>Math.ceil</code>?</li>
+						<li>¿Usás <code>(pagina - 1) * POR_PAGINA</code> para el inicio?</li>
+						<li>¿Deshabilitás «Anterior» en la primera y «Siguiente» en la última?</li>
+						<li>¿Pusiste <code>key</code> estable en cada elemento (un ID, no el índice)?</li>
+						<li>¿Marcás la página activa con <code>aria-current</code>?</li>
+						<li>¿Probaste qué pasa cuando hay 0 productos?</li>
+					</ul>
+				</div>
+				<div class="panel final-card progress-card">
+					<h3>Tu recorrido</h3>
+					<p id="progressText">Todavía no tocaste ningún paginador. ¡Probá los tres!</p>
+					<div class="progress-steps">
+						<span data-progress="s1">1 · Simple</span>
+						<span data-progress="s2">2 · Media</span>
+						<span data-progress="s3">3 · Avanzada</span>
+					</div>
+					<div class="progress-bar"><div id="progressFill"></div></div>
+				</div>
+			</div>
+
+			<div class="note note-source">
+				<div class="note-icon">📚</div>
+				<div>
+					<strong>De dónde salió esto.</strong>
+					Los textos base son los <code>pdf's</code>: definición y por qué del paginador y el código con
+					<code>limit</code>/<code>startAfter</code> (CLASE 14), los productos de ejemplo <em>Notebook Pro</em>,
+					<em>Monitor Curvo</em> y <em>Teclado Mecánico</em> (CLASE 04), y la estructura de la colección
+					<code>Productos nacionales</code> (CLASE 09). Los hooks, la ventana de páginas y los «…» son una extensión
+					didáctica para practicar la lógica sin Firebase.
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div>
+			<span class="brand-mark">‹ ›</span>
+			<strong>Paginación 101</strong>
+		</div>
+		<p>Hecho con HTML, CSS y JavaScript puro · Sin frameworks, sin instalación</p>
+	</footer>
+
+	<script src="prism/prism-core.min.js"></script>
+	<script src="prism/prism-clike.min.js"></script>
+	<script src="prism/prism-markup.min.js"></script>
+	<script src="prism/prism-javascript.min.js"></script>
+	<script src="prism/prism-jsx.min.js"></script>
+	<script src="app.js" defer></script>
+</body>
+</html>
