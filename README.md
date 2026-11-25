@@ -8,7 +8,7 @@ Abrí `index.html` con doble clic en tu navegador. No hay que instalar nada ni l
 
 ## Qué contiene
 
-1. **¿Por qué paginar?** — Las 4 razones del curso (rendimiento, experiencia de usuario, escalabilidad y consumo de recursos) y la definición de paginador de `extraido/CLASE 14 REACT.txt`.
+1. **¿Por qué paginar?** — Las 4 razones del curso (rendimiento, experiencia de usuario, escalabilidad y consumo de recursos) y la definición de paginador de `CLASE 14 REACT`.
 2. **Las 4 cuentas** — `totalPaginas`, `inicio`, `fin` y los límites de los botones, con el detalle del error *off-by-one*.
 3. **Paso 1 · Simple** — Solo «Anterior» y «Siguiente» (20 productos, 5 páginas).
 4. **Paso 2 · Media** — Igual, más los números del 1 al 6 y `aria-current="page"` (24 productos, 6 páginas).
@@ -29,9 +29,9 @@ Se usa **Prism.js** con el tema *Tomorrow*, guardado en `vendor/` (no se descarg
 
 ## Material del curso usado
 
-- `extraido/CLASE 14 REACT.txt`: definición de paginador, por qué es importante, `PRODUCTOS_POR_PAGINA = 4`, `limit()` / `startAfter()` con Firebase y el botón «Cargar más».
-- `extraido/CLASE 04 REACT.txt`: productos de ejemplo *Notebook Pro*, *Monitor Curvo* y *Teclado Mecánico* (son los primeros tres del catálogo).
-- `extraido/CLASE 09 REACT.txt`: colección `Productos nacionales` y estructura de cada producto (categoría, nombre, precio, stock, imagen).
+- `CLASE 14 REACT`: definición de paginador, por qué es importante, `PRODUCTOS_POR_PAGINA = 4`, `limit()` / `startAfter()` con Firebase y el botón «Cargar más».
+- `CLASE 04 REACT`: productos de ejemplo *Notebook Pro*, *Monitor Curvo* y *Teclado Mecánico* (son los primeros tres del catálogo).
+- `CLASE 09 REACT`: colección `Productos nacionales` y estructura de cada producto (categoría, nombre, precio, stock, imagen).
 
 Los números de página y los puntos suspensivos son una extensión didáctica para practicar la lógica sin depender de Firebase. En el paso 3 se explica cómo se traduce a `limit()` + `startAfter()`.
 
